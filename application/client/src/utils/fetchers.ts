@@ -13,12 +13,25 @@ export async function fetchBinary(url: string): Promise<ArrayBuffer> {
 }
 
 export async function fetchJSON<T>(url: string): Promise<T> {
-  const result = await $.ajax({
-    async: false,
-    dataType: "json",
+  // const result = await $.ajax({
+  //   async: false,
+  //   dataType: "json",
+  //   method: "GET",
+  //   url,
+  // });
+
+  const fetched = await fetch(url, {
     method: "GET",
-    url,
   });
+  const result = await fetched.json();
+
+  if(!fetched.ok) {
+    console.error(fetched.status, result);
+    throw new Error(`HTTP Error: ${fetched.status} (${fetched.statusText}) for ${url}`);
+  }
+
+  console.log(url, result);
+
   return result;
 }
 
