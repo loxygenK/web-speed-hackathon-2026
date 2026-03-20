@@ -1,3 +1,5 @@
+// FIXME: defensive programming
+
 import { ReactNode, useEffect, useRef } from "react";
 
 interface Props {
@@ -12,6 +14,9 @@ export const InfiniteScroll = ({ children, fetchMore, items }: Props) => {
   const prevReachedRef = useRef(false);
 
   useEffect(() => {
+    console.warn("InfiniteScroll is temporalily disabled");
+    return;
+
     const handler = () => {
       // 念の為 2の18乗 回、最下部かどうかを確認する
       const hasReached = Array.from(Array(2 ** 18), () => {

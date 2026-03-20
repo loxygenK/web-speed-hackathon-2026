@@ -1,17 +1,13 @@
-/// <reference types="webpack-dev-server" />
 const path = require("path");
-
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
+const { rspack } = require("@rspack/core");
+const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
 
 const SRC_PATH = path.resolve(__dirname, "./src");
 const PUBLIC_PATH = path.resolve(__dirname, "../public");
 const UPLOAD_PATH = path.resolve(__dirname, "../upload");
 const DIST_PATH = path.resolve(__dirname, "../dist");
 
-/** @type {import('webpack').Configuration} */
+/** @type {import('@rspack/core').Configuration} */
 const config = {
   devServer: {
     historyApiFallback: true,
@@ -25,7 +21,7 @@ const config = {
     ],
     static: [PUBLIC_PATH, UPLOAD_PATH],
   },
-  devtool: "inline-source-map",
+  devtool: "cheap-source-map",
   entry: {
     main: [
       "core-js",
@@ -42,47 +38,68 @@ const config = {
       {
         exclude: /node_modules/,
         test: /\.(jsx?|tsx?|mjs|cjs)$/,
-        use: [{ loader: "babel-loader" }],
-      },
-      {
-        test: /\.css$/i,
         use: [
-          { loader: MiniCssExtractPlugin.loader },
-          { loader: "css-loader", options: { url: false } },
-          { loader: "postcss-loader" },
+          {
+            loader: "builtin:swc-loader",
+            options: {
+              jsc: {
+                parser: {
+                  syntax: "typescript",
+                  tsx: true,
+                },
+                transform: {
+                  react: {
+                    development: true,
+                    runtime: "automatic",
+                  },
+                },
+              },
+              env: {
+                targets: "ie 11",
+                coreJs: "3",
+                mode: undefined,
+              },
+            },
+          },
         ],
       },
       {
+        test: /\.css$/i,
+        use: [{ loader: "postcss-loader" }],
+        type: "css",
+      },
+      {
         resourceQuery: /binary/,
-        type: "asset/bytes",
+        type: "asset/inline",
       },
     ],
+    parser: {
+      css: {
+        namedExports: false,
+        url: false,
+      },
+    },
   },
   output: {
-    // chunkFilename: "scripts/chunk-[contenthash].js",
-    // chunkFormat: false,
     filename: "scripts/[name].js",
     path: DIST_PATH,
     publicPath: "auto",
     clean: true,
+    cssFilename: "styles/[name].css",
   },
   plugins: [
-    new webpack.ProvidePlugin({
+    new rspack.ProvidePlugin({
       $: "jquery",
       AudioContext: ["standardized-audio-context", "AudioContext"],
       Buffer: ["buffer", "Buffer"],
       "window.jQuery": "jquery",
     }),
-    new webpack.EnvironmentPlugin({
+    new rspack.EnvironmentPlugin({
       BUILD_DATE: new Date().toISOString(),
-      // Heroku では SOURCE_VERSION 環境変数から commit hash を参照できます
       COMMIT_HASH: process.env.SOURCE_VERSION || "",
       NODE_ENV: "development",
     }),
-    new MiniCssExtractPlugin({
-      filename: "styles/[name].css",
-    }),
-    new CopyWebpackPlugin({
+    new rspack.CopyRspackPlugin({
       patterns: [
         {
           from: path.resolve(__dirname, "node_modules/katex/dist/fonts"),
@@ -90,11 +107,12 @@ const config = {
         },
       ],
     }),
-    new HtmlWebpackPlugin({
+    new rspack.HtmlRspackPlugin({
       inject: false,
       template: path.resolve(SRC_PATH, "./index.html"),
     }),
-  ],
+    process.env.ALY && new RsdoctorRspackPlugin({}),
+  ].filter(Boolean),
   resolve: {
     extensions: [".tsx", ".ts", ".mjs", ".cjs", ".jsx", ".js"],
     alias: {
@@ -138,13 +156,10 @@ const config = {
     providedExports: true,
     sideEffects: true,
   },
-  cache: true,
-  ignoreWarnings: [
-    {
-      module: /@ffmpeg/,
-      message: /Critical dependency: the request of a dependency is an expression/,
-    },
-  ],
+  experiments: {
+    css: true,
+  },
+  ignoreWarnings: [/Critical dependency/],
 };
 
 module.exports = config;
