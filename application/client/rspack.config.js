@@ -97,7 +97,6 @@ const config = {
     new rspack.EnvironmentPlugin({
       BUILD_DATE: new Date().toISOString(),
       COMMIT_HASH: process.env.SOURCE_VERSION || "",
-      NODE_ENV: "development",
     }),
     new rspack.CopyRspackPlugin({
       patterns: [
