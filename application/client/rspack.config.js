@@ -7,6 +7,8 @@ const PUBLIC_PATH = path.resolve(__dirname, "../public");
 const UPLOAD_PATH = path.resolve(__dirname, "../upload");
 const DIST_PATH = path.resolve(__dirname, "../dist");
 
+const analyzing = process.env.ALY;
+
 /** @type {import('@rspack/core').Configuration} */
 const config = {
   devServer: {
@@ -22,6 +24,7 @@ const config = {
     static: [PUBLIC_PATH, UPLOAD_PATH],
   },
   devtool: "source-map",
+  mode: analyzing ? "development" : undefined,
   entry: {
     main: [
       "core-js",
@@ -109,7 +112,7 @@ const config = {
       inject: true,
       template: path.resolve(SRC_PATH, "./index.html"),
     }),
-    process.env.ALY && new RsdoctorRspackPlugin({
+    analyzing && new RsdoctorRspackPlugin({
       port: 4000,
     }),
   ].filter(Boolean),

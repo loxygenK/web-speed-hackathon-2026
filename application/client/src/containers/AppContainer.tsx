@@ -4,12 +4,12 @@ import { Route, Routes, useLocation, useNavigate } from "react-router";
 
 import { AppPage } from "@web-speed-hackathon-2026/client/src/components/application/AppPage";
 import { fetchJSON, sendJSON } from "@web-speed-hackathon-2026/client/src/utils/fetchers";
+import { AuthModalContainer } from "./AuthModalContainer";
+import { NewPostModalContainer } from "./NewPostModalContainer";
 
-const AuthModalContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/AuthModalContainer").then(m => ({ default: m.AuthModalContainer })));
 const CrokContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/CrokContainer").then(m => ({ default: m.CrokContainer })));
 const DirectMessageContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/DirectMessageContainer").then(m => ({ default: m.DirectMessageContainer })));
 const DirectMessageListContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/DirectMessageListContainer").then(m => ({ default: m.DirectMessageListContainer })));
-const NewPostModalContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/NewPostModalContainer").then(m => ({ default: m.NewPostModalContainer })));
 const NotFoundContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/NotFoundContainer").then(m => ({ default: m.NotFoundContainer })));
 const PostContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/PostContainer").then(m => ({ default: m.PostContainer })));
 const SearchContainer = lazy(() => import("@web-speed-hackathon-2026/client/src/containers/SearchContainer").then(m => ({ default: m.SearchContainer })));
@@ -89,10 +89,9 @@ export const AppContainer = () => {
         </Suspense>
       </AppPage>
 
-      <Suspense>
-        <AuthModalContainer id={authModalId} onUpdateActiveUser={setActiveUser} />
-        <NewPostModalContainer id={newPostModalId} />
-      </Suspense>
+      {/* This is not lazied - E2E expects this to be available right after loaded */}
+      <AuthModalContainer id={authModalId} onUpdateActiveUser={setActiveUser} />
+      <NewPostModalContainer id={newPostModalId} />
     </HelmetProvider>
   );
 };
