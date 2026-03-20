@@ -53,7 +53,7 @@ export const PausableMovie = ({ src }: Props) => {
         onClick={handleClick}
         type="button"
       >
-        <video ref={videoElemRef} className="w-full h-full" muted>
+        <video ref={videoElemRef} className="w-full h-full" muted loop>
           <source src={src} />
         </video>
         <div

@@ -2,7 +2,7 @@ interface Options {
   extension: string;
 }
 
-export async function convertSound(file: File, options: Options): Promise<Blob> {
+export async function convertSound(file: File, _options: Options): Promise<Blob> {
   // FIXME: Optimize the resource at server-side
   console.warn("convertSound is pretty much noop");
   return new Blob([file]);

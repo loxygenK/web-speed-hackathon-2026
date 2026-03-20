@@ -4,7 +4,7 @@ interface Options {
   extension: MagickFormat;
 }
 
-export function convertImage(file: File, options: Options): Promise<Blob> {
+export function convertImage(file: File, _options: Options): Promise<Blob> {
   // probably want to fix the alt
   return Promise.resolve(new Blob([file]));
 
