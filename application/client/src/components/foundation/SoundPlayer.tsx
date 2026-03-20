@@ -38,7 +38,7 @@ export const SoundPlayer = ({ sound }: Props) => {
   }, []);
 
   if (isLoading || data === null || blobUrl === null) {
-    return null;
+    return <div className="w-32 h-32 bg-[blue]" />
   }
 
   return (

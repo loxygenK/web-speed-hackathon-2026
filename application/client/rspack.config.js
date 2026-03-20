@@ -28,9 +28,9 @@ const config = {
   mode: analyzing ? "development" : undefined,
   entry: {
     main: [
-      "core-js",
-      "regenerator-runtime/runtime",
-      "jquery-binarytransport",
+      // "core-js",
+      // "regenerator-runtime/runtime",
+      // "jquery-binarytransport",
       path.resolve(SRC_PATH, "./index.css"),
       path.resolve(SRC_PATH, "./buildinfo.ts"),
       path.resolve(SRC_PATH, "./index.tsx"),
@@ -58,9 +58,9 @@ const config = {
               },
               },
               env: {
-                // targets: "ie 11",
+                targets: "last 1 chrome versions",
+                mode: "usage",
                 // coreJs: "3",
-                // mode: undefined,
               },
             },
           },
@@ -93,7 +93,7 @@ const config = {
   plugins: [
     new rspack.ProvidePlugin({
       $: "jquery",
-      AudioContext: ["standardized-audio-context", "AudioContext"],
+      // AudioContext: ["standardized-audio-context", "AudioContext"],
       Buffer: ["buffer", "Buffer"],
       "window.jQuery": "jquery",
     }),

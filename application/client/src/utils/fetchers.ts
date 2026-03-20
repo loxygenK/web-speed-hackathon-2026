@@ -2,14 +2,16 @@ import $ from "jquery";
 import { gzip } from "pako";
 
 export async function fetchBinary(url: string): Promise<ArrayBuffer> {
-  const result = await $.ajax({
-    async: false,
-    dataType: "binary",
+  const fetched = await fetch(url, {
     method: "GET",
-    responseType: "arraybuffer",
-    url,
   });
-  return result;
+  const result = await fetched.bytes();
+
+  if(!fetched.ok) {
+    throw new Error(`HTTP Error: ${fetched.status} (${fetched.statusText}) for ${url}`);
+  }
+
+  return result.buffer;
 }
 
 export async function fetchJSON<T>(url: string, query: Record<string, string | number | undefined> = {}): Promise<T> {
