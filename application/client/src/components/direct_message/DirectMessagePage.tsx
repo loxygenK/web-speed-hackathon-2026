@@ -128,6 +128,7 @@ export const DirectMessagePage = ({
                   "flex flex-col w-full",
                   isActiveUserSend ? "items-end" : "items-start",
                 )}
+                key={message.id}
               >
                 <p
                   className={classNames(
