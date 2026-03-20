@@ -29,15 +29,19 @@ export const InfiniteScroll = ({ children, fetchMore, items }: Props) => {
         return;
       }
 
-      console.log("Reached");
+      console.log("Reached", target.target);
       if(latestItem !== undefined) {
         return fetchMore();
       }
     }
 
-    const observer = new IntersectionObserver(handleReach);
+    const observer = new IntersectionObserver(handleReach, {
+      rootMargin: "32px",
+    });
+    console.log("Connecting");
     observer.observe(lastRef.current);
     return () => {
+      console.log("Disconnected");
       observer.disconnect();
     };
   }, [latestItem, fetchMore]);
