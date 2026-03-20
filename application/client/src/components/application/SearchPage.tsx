@@ -137,6 +137,7 @@ const SearchPageComponent = ({
 
 export const SearchPage = reduxForm<SearchFormData, Props>({
   form: "search",
-  enableReinitialize: true,
+  // ???: This no longer tracks the change so browser navigation does not change the text
+  // enableReinitialize: true,
   validate,
 })(SearchPageComponent);
