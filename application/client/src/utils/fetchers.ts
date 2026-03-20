@@ -12,7 +12,7 @@ export async function fetchBinary(url: string): Promise<ArrayBuffer> {
   return result;
 }
 
-export async function fetchJSON<T>(url: string): Promise<T> {
+export async function fetchJSON<T>(url: string, query: Record<string, string | number> = {}): Promise<T> {
   // const result = await $.ajax({
   //   async: false,
   //   dataType: "json",
@@ -20,7 +20,9 @@ export async function fetchJSON<T>(url: string): Promise<T> {
   //   url,
   // });
 
-  const fetched = await fetch(url, {
+  const queryText =  new URLSearchParams(Object.entries(query).map(([k, v]) => [k, v.toString()]));
+
+  const fetched = await fetch(`${url}?${queryText}`, {
     method: "GET",
   });
   const result = await fetched.json();
