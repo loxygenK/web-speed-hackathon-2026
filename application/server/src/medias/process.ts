@@ -3,6 +3,7 @@ import childProcess from "node:child_process";
 export function runShellCommand(exec: string, param: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const process = childProcess.spawn(exec, param);
+    process.stdin.destroy();
 
     console.info(`i: \x1b[48;5;232m${[exec, ...param].join("\x1b[m \x1b[48;5;232m")}\x1b[m`)
 
@@ -17,7 +18,7 @@ export function runShellCommand(exec: string, param: string[]): Promise<string> 
     });
 
     process.on("exit", (exit) => {
-      if(exit == null || exit === 0) {
+      if(exit === 0) {
         resolve(stdout);
       } else {
         reject({ exit, data: stdout, stderr });

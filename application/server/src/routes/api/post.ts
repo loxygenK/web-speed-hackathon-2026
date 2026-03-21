@@ -54,9 +54,7 @@ postRouter.post("/posts", async (req, res) => {
     },
     {
       include: [
-        {
-          association: "images",
-        },
+        { association: "images" },
         { association: "movie" },
         { association: "sound" },
       ],

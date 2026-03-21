@@ -22,6 +22,7 @@ import type {
 
 import { tinifyTheImage, extractAltFromMedia } from "../src/medias/image";
 import { PUBLIC_PATH } from "../src/paths";
+import { createSoundWave } from "../src/medias/audio";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const seedsDir = path.resolve(__dirname, "../seeds");
@@ -240,13 +241,14 @@ function generateMovies(): MovieSeed[] {
   }));
 }
 
-function generateSounds(): SoundSeed[] {
+async function generateSounds(): Promise<SoundSeed[]> {
   // Use existing sound data from public/sounds/
-  return EXISTING_SOUNDS.map(({ id, title, artist }) => ({
+  return await Promise.all(EXISTING_SOUNDS.map(async ({ id, title, artist }) => ({
     id,
     title,
     artist,
-  }));
+    soundWave: await createSoundWave(`${PUBLIC_PATH}/sounds/${id}.mp3`),
+  })));
 }
 
 const postTemplates = [
@@ -699,7 +701,7 @@ async function writeJsonlFile<T>(filename: string, data: T[]): Promise<void> {
 
 async function main() {
   console.log(await tinifyTheImage(
-    `${PUBLIC_PATH}/images/_orig/029b4b75-bbcc-4aa5-8bd7-e4bb12a33cd3.jpg`,
+    `${PUBLIC_PATH}/images/029b4b75-bbcc-4aa5-8bd7-e4bb12a33cd3.jpg`,
     `${PUBLIC_PATH}/images/029b4b75-bbcc-4aa5-8bd7-e4bb12a33cd3.webp`,
   ));
   console.log(await extractAltFromMedia(
@@ -721,7 +723,7 @@ async function main() {
   const movies = generateMovies();
 
   console.log("5. Generating Sounds (using existing assets)...");
-  const sounds = generateSounds();
+  const sounds = await generateSounds();
 
   console.log("6. Generating Posts...");
   const posts = generatePosts(CONFIG.POST_COUNT, users, movies, sounds);

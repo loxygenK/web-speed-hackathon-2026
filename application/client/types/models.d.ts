@@ -1,3 +1,5 @@
+
+
 declare namespace Models {
   interface User {
     createdAt: string;
@@ -34,6 +36,11 @@ declare namespace Models {
     artist: string;
     id: string;
     title: string;
+    soundWave: SoundWavePoints;
+  }
+  interface SoundWavePoints {
+    max: number;
+    peaks: number[]
   }
 
   interface Movie {
