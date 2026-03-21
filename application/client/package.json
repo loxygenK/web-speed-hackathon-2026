@@ -5,12 +5,12 @@
   "license": "MPL-2.0",
   "author": "CyberAgent, Inc.",
   "scripts": {
-    "build": "pnpm build:web && pnpm build:css",
-    "build:web": "NODE_ENV=production rspack build",
+    "build": "pnpm build:css && pnpm build:web",
     "build:css": "pnpm tailwindcss -i ./src/index.css -o ./src/root.css -m",
-    "dev": "concurrently 'pnpm dev:serve' 'pnpm dev:css'",
-    "dev:serve": "rspack serve",
+    "build:web": "NODE_ENV=production rspack build",
+    "dev": "concurrently 'pnpm dev:css' 'pnpm dev:serve'",
     "dev:css": "pnpm tailwindcss -i ./src/index.css -o ./src/root.css --watch",
+    "dev:serve": "rspack serve",
     "typecheck": "tsc"
   },
   "dependencies": {
