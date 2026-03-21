@@ -94,6 +94,7 @@ const config = {
     publicPath: "/",
     clean: true,
     cssFilename: "styles/[name].css",
+    cssChunkFilename: "styles/[name].css",
   },
   plugins: [
     new rspack.ProvidePlugin({
