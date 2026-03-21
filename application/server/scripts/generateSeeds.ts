@@ -21,8 +21,9 @@ import type {
 } from "../src/types/seed";
 
 import { tinifyTheImage, extractAltFromMedia } from "../src/medias/image";
-import { PUBLIC_PATH } from "../src/paths";
+import { cropMovie } from "../src/medias/movie";
 import { createSoundWave } from "../src/medias/audio";
+import { PUBLIC_PATH } from "../src/paths";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const seedsDir = path.resolve(__dirname, "../seeds");
@@ -234,7 +235,14 @@ async function generateImages(): Promise<ImageSeed[]> {
   ));
 }
 
-function generateMovies(): MovieSeed[] {
+async function generateMovies(): Promise<MovieSeed[]> {
+  await Promise.all(EXISTING_MOVIE_IDS.map(async (id) => {
+    await cropMovie(
+      `${PUBLIC_PATH}/movies/${id}.gif`,
+      `${PUBLIC_PATH}/movies/${id}.mp4`,
+    );
+  }));
+
   // Use existing movie IDs from public/movies/
   return EXISTING_MOVIE_IDS.map((id) => ({
     id,
@@ -720,7 +728,7 @@ async function main() {
   const images = await generateImages();
 
   console.log("4. Generating Movies (using existing assets)...");
-  const movies = generateMovies();
+  const movies = await generateMovies();
 
   console.log("5. Generating Sounds (using existing assets)...");
   const sounds = await generateSounds();

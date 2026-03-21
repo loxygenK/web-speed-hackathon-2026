@@ -21,6 +21,7 @@ export function runShellCommand(exec: string, param: string[]): Promise<string> 
       if(exit === 0) {
         resolve(stdout);
       } else {
+        console.error({ exit, data: stdout, stderr });
         reject({ exit, data: stdout, stderr });
       }
     });

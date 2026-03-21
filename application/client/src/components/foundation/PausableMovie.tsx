@@ -68,7 +68,7 @@ export const PausableMovie = ({ src }: Props) => {
         onClick={handleClick}
         type="button"
       >
-        <video ref={videoElemRef} className="w-full h-full" muted loop autoPlay={window.matchMedia("(prefers-reduced-motion: reduce)").matches}>
+        <video ref={videoElemRef} className="w-full h-full" muted loop autoPlay={!window.matchMedia("(prefers-reduced-motion: reduce)").matches}>
           <source src={src} />
         </video>
         <div
