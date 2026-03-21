@@ -1,5 +1,14 @@
-import $ from "jquery";
-import { gzip } from "pako";
+export class RequestFailError extends Error {
+  public readonly status: number;
+  public readonly json: object | undefined;
+
+  constructor(response: Response, json: object | undefined) {
+    super(`HTTP Error: ${response.status} (${response.statusText}) for ${response.url}`);
+
+    this.status = response.status;
+    this.json = json;
+  }
+}
 
 export async function fetchBinary(url: string): Promise<ArrayBuffer> {
   const fetched = await fetch(url, {
@@ -8,7 +17,7 @@ export async function fetchBinary(url: string): Promise<ArrayBuffer> {
   const result = await fetched.bytes();
 
   if(!fetched.ok) {
-    throw new Error(`HTTP Error: ${fetched.status} (${fetched.statusText}) for ${url}`);
+    throw new RequestFailError(fetched, undefined);
   }
 
   return result.buffer;
@@ -22,8 +31,7 @@ export async function fetchJSON<T>(url: string, query: Record<string, string | n
   //   url,
   // });
 
-  const queryText =  new URLSearchParams(
-    Object.entries(query)
+  const queryText =  new URLSearchParams( Object.entries(query)
       .filter((obj): obj is [string, string | number] => obj[1] !== undefined)
       .map(([k, v]) => [k, v.toString()])
   );
@@ -35,7 +43,7 @@ export async function fetchJSON<T>(url: string, query: Record<string, string | n
 
   if(!fetched.ok) {
     console.error(fetched.status, result);
-    throw new Error(`HTTP Error: ${fetched.status} (${fetched.statusText}) for ${url}`);
+    throw new RequestFailError(fetched, result);
   }
 
   console.log(url, result);
@@ -44,36 +52,43 @@ export async function fetchJSON<T>(url: string, query: Record<string, string | n
 }
 
 export async function sendFile<T>(url: string, file: File): Promise<T> {
-  const result = await $.ajax({
-    async: false,
-    data: file,
-    dataType: "json",
+  const fetched = await fetch(url, {
     headers: {
       "Content-Type": "application/octet-stream",
     },
     method: "POST",
-    processData: false,
-    url,
+    body: file,
   });
+
+  const result = await fetched.json();
+
+  console.log("POST", url, fetched.status, result);
+
+  if(!fetched.ok) {
+    console.error(fetched.status, result);
+    throw new RequestFailError(fetched, result);
+  }
+
   return result;
 }
 
 export async function sendJSON<T>(url: string, data: object): Promise<T> {
-  const jsonString = JSON.stringify(data);
-  const uint8Array = new TextEncoder().encode(jsonString);
-  const compressed = gzip(uint8Array);
-
-  const result = await $.ajax({
-    async: false,
-    data: compressed,
-    dataType: "json",
+  const fetched = await fetch(url, {
     headers: {
-      "Content-Encoding": "gzip",
       "Content-Type": "application/json",
     },
     method: "POST",
-    processData: false,
-    url,
+    body: JSON.stringify(data),
   });
+
+  const result = await fetched.json();
+
+  if(!fetched.ok) {
+    console.error(fetched.status, result);
+    throw new RequestFailError(fetched, result);
+  }
+
+  console.log(url, result);
+
   return result;
 }

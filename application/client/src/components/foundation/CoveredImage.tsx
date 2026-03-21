@@ -1,32 +1,21 @@
-import { MouseEvent, useCallback, useEffect, useId, useState } from "react";
+import { MouseEvent, useCallback, useId } from "react";
 
 import { Button } from "@web-speed-hackathon-2026/client/src/components/foundation/Button";
 import { Modal } from "@web-speed-hackathon-2026/client/src/components/modal/Modal";
 
 interface Props {
   src: string;
+  alt: string;
 }
 
 /**
  * アスペクト比を維持したまま、要素のコンテンツボックス全体を埋めるように画像を拡大縮小します
  */
-export const CoveredImage = ({ src }: Props) => {
+export const CoveredImage = ({ src, alt }: Props) => {
   const dialogId = useId();
   // ダイアログの背景をクリックしたときに投稿詳細ページに遷移しないようにする
   const handleDialogClick = useCallback((ev: MouseEvent<HTMLDialogElement>) => {
     ev.stopPropagation();
-  }, []);
-
-  const [alt, setAlt] = useState("");
-
-  useEffect(() => {
-    void(async () => {
-      setAlt("probably will be fixed later");
-      // const data = await fetchBinary(src);
-      // const exif = load(Buffer.from(data).toString("binary"));
-      // const raw = exif?.["0th"]?.[ImageIFD.ImageDescription];
-      // setAlt(raw != null ? new TextDecoder().decode(Buffer.from(raw, "binary")) : "");
-    })();
   }, []);
 
   return (

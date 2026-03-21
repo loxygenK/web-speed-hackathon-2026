@@ -22,7 +22,13 @@ const config = {
         ws: true,
       },
     ],
-    static: [PUBLIC_PATH, UPLOAD_PATH],
+    static: [
+      PUBLIC_PATH,
+      {
+        directory: UPLOAD_PATH,
+        watch: false,
+      },
+    ],
   },
   devtool: "source-map",
   mode: analyzing ? "development" : undefined,
@@ -30,7 +36,6 @@ const config = {
     main: [
       // "core-js",
       // "regenerator-runtime/runtime",
-      // "jquery-binarytransport",
       path.resolve(SRC_PATH, "./index.css"),
       path.resolve(SRC_PATH, "./buildinfo.ts"),
       path.resolve(SRC_PATH, "./index.tsx"),
@@ -92,10 +97,7 @@ const config = {
   },
   plugins: [
     new rspack.ProvidePlugin({
-      $: "jquery",
-      // AudioContext: ["standardized-audio-context", "AudioContext"],
       Buffer: ["buffer", "Buffer"],
-      "window.jQuery": "jquery",
     }),
     new rspack.EnvironmentPlugin({
       BUILD_DATE: new Date().toISOString(),
@@ -136,11 +138,6 @@ const config = {
         __dirname,
         "node_modules",
         "@ffmpeg/core/dist/umd/ffmpeg-core.wasm",
-      ),
-      "@imagemagick/magick-wasm/magick.wasm$": path.resolve(
-        __dirname,
-        "node_modules",
-        "@imagemagick/magick-wasm/dist/magick.wasm",
       ),
     },
     fallback: {
