@@ -20,7 +20,7 @@ export async function extractMetadataFromSound(path: string): Promise<SoundMetad
     const exportFile = "meta.txt";
 
     await runShellCommand("ffmpeg", [
-      "-i", path, "-f", "ffmetadata", exportFile
+      "-i", path, "-y", "-f", "ffmetadata", exportFile
     ]);
 
     console.log("Returned");
